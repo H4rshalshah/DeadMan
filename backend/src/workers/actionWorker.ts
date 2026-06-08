@@ -11,16 +11,23 @@ const logger = winston.createLogger({
 
 export let actionQueue: Queue | null = null;
 
+let redisUnavailableWarned = false;
+
 export function getActionQueue(): Queue | null {
   if (actionQueue) {
     return actionQueue;
   }
 
   try {
+    const connection = {
+      url: config.redisUrl,
+      maxRetriesPerRequest: null,
+      retryStrategy: () => null as number | null,
+      enableOfflineQueue: false,
+    };
+
     actionQueue = new Queue('runbook-executions', {
-      connection: {
-        url: config.redisUrl,
-      },
+      connection,
       defaultJobOptions: {
         attempts: 3,
         backoff: { type: 'exponential', delay: 2000 },
@@ -28,6 +35,9 @@ export function getActionQueue(): Queue | null {
         removeOnFail: { age: 86400 },
       },
     });
+
+    // Suppress Redis connection errors for queue as well
+    actionQueue.on('error', () => {});
 
     logger.info('[Worker] BullMQ action queue initialized');
     return actionQueue;
@@ -42,6 +52,13 @@ export function getActionQueue(): Queue | null {
 
 export function initWorker(): Worker | null {
   try {
+    const connection = {
+      url: config.redisUrl,
+      maxRetriesPerRequest: null,
+      retryStrategy: () => null as number | null,
+      enableOfflineQueue: false,
+    };
+
     const worker = new Worker(
       'runbook-executions',
       async (job: Job) => {
@@ -72,13 +89,23 @@ export function initWorker(): Worker | null {
         }
       },
       {
-        connection: {
-          url: config.redisUrl,
-        },
+        connection,
         concurrency: 5,
         lockDuration: 30000,
       }
     );
+
+    // Suppress Redis connection errors — worker is non-critical, falls back to memory store
+    worker.on('error', (error) => {
+      const isConnRefused = (error as { code?: string })?.code === 'ECONNREFUSED' ||
+        (error as Error).message?.includes('ECONNREFUSED');
+      if (isConnRefused && !redisUnavailableWarned) {
+        logger.warn('Redis unavailable — background worker disabled. Runbook execution will use fallback.');
+        redisUnavailableWarned = true;
+      } else if (!isConnRefused) {
+        logger.error('[Worker] Unexpected error', { error: error instanceof Error ? error.message : error });
+      }
+    });
 
     worker.on('completed', (job) => {
       logger.info(`Job ${job.id} completed`);
