@@ -7,6 +7,11 @@ import { config } from './config';
 import { initSocket } from './websocket/incidentSocket';
 import { initWorker } from './workers/actionWorker';
 import { closeDatabase, initializeDatabase, isUsingMemoryStore } from './db/connection';
+import { seedMemoryStore, memoryStore } from './db/memoryStore';
+import { IncidentDocument } from './models/Incident';
+import { RunbookDocument } from './models/Runbook';
+import { ActionExecutionDocument } from './models/AuditLog';
+import { MonitorDocument, SettingDocument, WebhookLogDocument } from './models/Operational';
 import winston from 'winston';
 
 // Routes
@@ -116,6 +121,27 @@ process.on('SIGTERM', () => {
 (async () => {
   try {
     await initializeDatabase();
+
+    // Auto-seed demo data if using MongoDB with empty collections
+    if (!isUsingMemoryStore()) {
+      const count = await IncidentDocument.countDocuments();
+      if (count === 0) {
+        seedMemoryStore(true);
+        logger.info('Seeding MongoDB with demo data...');
+        await Promise.all([
+          IncidentDocument.insertMany(memoryStore.incidents),
+          RunbookDocument.insertMany(memoryStore.runbooks),
+          ActionExecutionDocument.insertMany(memoryStore.actionExecutions),
+          MonitorDocument.insertMany(memoryStore.monitors),
+          SettingDocument.insertMany(memoryStore.settings),
+          WebhookLogDocument.insertMany(memoryStore.webhookLogs),
+        ]);
+        logger.info(`Auto-seeded MongoDB with ${memoryStore.incidents.length} incidents, ${memoryStore.runbooks.length} runbooks, ${memoryStore.monitors.length} monitors`);
+      } else {
+        logger.info(`MongoDB has ${count} existing incidents — skipping seed`);
+      }
+    }
+
     httpServer.listen(config.port, () => {
       logger.info(`DeadMan backend running on port ${config.port}`);
       logger.info(`Environment: ${config.nodeEnv}`);
