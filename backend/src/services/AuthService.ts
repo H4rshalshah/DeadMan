@@ -64,9 +64,9 @@ export class AuthService {
       // Check if user already exists with a different auth provider (e.g. email signup)
       const existingUser = await UserModel.findByEmail(profile.email);
       if (existingUser) {
-        // Link OAuth to existing account — update provider, name, verify email, etc.
+        // Link OAuth to existing account — attach googleId/githubId but
+        // do NOT overwrite authProvider (user's primary signup method stays intact)
         const updates: Partial<User> = {
-          authProvider: provider,
           name: profile.name || existingUser.name,
           avatarUrl: profile.avatarUrl || existingUser.avatarUrl,
           emailVerified: true,

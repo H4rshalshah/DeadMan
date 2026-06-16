@@ -99,11 +99,13 @@ const InviteSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// NOTE: passwordHash is NOT deleted here because internal methods (loginEmail)
+// need it to verify passwords. It is stripped from API responses at the
+// controller/service level via destructuring: `const { passwordHash: _, ...safeUser } = user;`
 UserSchema.set('toJSON', {
   transform: (_doc, ret: Record<string, unknown>) => {
     delete ret._id;
     delete ret.__v;
-    delete ret.passwordHash;
     return ret;
   },
 });
@@ -203,9 +205,31 @@ export class UserModel {
 
   static async findByOAuth(provider: AuthProvider, email: string): Promise<User | null> {
     if (isUsingMemoryStore()) {
+      // Search by provider-specific ID + email (handles linked accounts where authProvider wasn't overwritten)
+      if (provider === 'google') {
+        const byGoogleId = userMemoryStore.find((u) => u.email === email && u.googleId !== null);
+        if (byGoogleId) return byGoogleId;
+      }
+      if (provider === 'github') {
+        const byGithubId = userMemoryStore.find((u) => u.email === email && u.githubId !== null);
+        if (byGithubId) return byGithubId;
+      }
       return userMemoryStore.find((u) => u.authProvider === provider && u.email === email) || null;
     }
-    const doc = await UserDocument.findOne({ authProvider: provider, email: email.toLowerCase() });
+    // Search by provider-specific ID (handles linked accounts where authProvider wasn't overwritten)
+    const query: Record<string, unknown> = { email: email.toLowerCase() };
+    if (provider === 'google') {
+      query.googleId = { $ne: null, $exists: true };
+    } else if (provider === 'github') {
+      query.githubId = { $ne: null, $exists: true };
+    } else {
+      query.authProvider = provider;
+    }
+    let doc = await UserDocument.findOne(query);
+    // Fall back to authProvider + email search
+    if (!doc) {
+      doc = await UserDocument.findOne({ authProvider: provider, email: email.toLowerCase() });
+    }
     return doc ? normalize<User>(doc) : null;
   }
 
@@ -329,7 +353,15 @@ export class WorkspaceMemberModel {
     const users = await UserDocument.find({ id: { $in: userIds } });
     return members.map((m) => {
       const user = users.find((u) => u.id === m.userId);
-      return { ...normalize<WorkspaceMember>(m), user: user ? normalize<User>(user) : undefined };
+      // Strip passwordHash before returning to frontend
+      const safeUser = user
+        ? ((() => {
+            const normalized = normalize<User>(user);
+            const { passwordHash: _, ...rest } = normalized;
+            return rest;
+          })() as User)
+        : undefined;
+      return { ...normalize<WorkspaceMember>(m), user: safeUser };
     });
   }
 
