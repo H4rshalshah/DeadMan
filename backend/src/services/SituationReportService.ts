@@ -14,10 +14,19 @@ export interface SituationReport {
 
 export class SituationReportService {
   static async generate(incident: Incident): Promise<SituationReport> {
-    const [commits, similarIncidents] = await Promise.all([
-      GitHubService.getRecentCommits(2), // last 2 hours
-      IncidentService.findSimilar(incident.title),
-    ]);
+    // Wrap in try-catch so one failing data source doesn't crash the whole report
+    let commits: { sha: string; message: string; author: string; date: Date }[] = [];
+    let similarIncidents: Incident[] = [];
+    try {
+      const results = await Promise.all([
+        GitHubService.getRecentCommits(2).catch(() => [] as { sha: string; message: string; author: string; date: Date }[]),
+        IncidentService.findSimilar(incident.title).catch(() => [] as Incident[]),
+      ]);
+      commits = results[0];
+      similarIncidents = results[1];
+    } catch {
+      // If both fail, continue with empty arrays
+    }
 
     const affectedServices = await this.detectAffectedServices(incident);
     const errorRateData = this.generateErrorRateData();

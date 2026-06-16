@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TerminalText from '@/components/ui/TerminalText';
 import { Clipboard, FileDown, Loader2 } from 'lucide-react';
@@ -10,19 +10,15 @@ import type { SituationReport } from '@/lib/types';
 
 interface SituationReportProps {
   incidentId: string;
-  autoGenerate?: boolean;
 }
 
-export default function SituationReportComponent({ incidentId, autoGenerate = true }: SituationReportProps) {
+export default function SituationReportComponent({ incidentId }: SituationReportProps) {
   const [report, setReport] = useState<SituationReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState(false);
 
-  useEffect(() => {
-    if (autoGenerate) {
-      generateReport();
-    }
-  }, [incidentId, autoGenerate]);
+  // Note: Report is NOT auto-generated on mount — user clicks "Generate Report" button
+  // This prevents unnecessary API calls on every page visit
 
   const generateReport = async () => {
     try {

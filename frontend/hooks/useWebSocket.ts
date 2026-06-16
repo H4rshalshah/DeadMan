@@ -5,6 +5,17 @@ import { getSocket, subscribeToDashboard, subscribeToIncident, unsubscribeFromIn
 import type { Socket } from 'socket.io-client';
 import type { Incident, StepUpdate } from '@/lib/types';
 
+// Debounce helper to prevent rapid refetch loops
+type AnyFn = (...args: any[]) => void;
+function debounce<T extends AnyFn>(fn: T, ms: number): T {
+  let timer: ReturnType<typeof setTimeout>;
+  const debounced = (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  return debounced as unknown as T;
+}
+
 type EventHandler<T = unknown> = (data: T) => void;
 
 interface UseWebSocketOptions {
@@ -22,21 +33,22 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   useEffect(() => {
     const socket: Socket = getSocket();
 
-    const handleIncidentNew = (data: Incident) => {
+    // Debounce all handlers to prevent rapid-fire refetch loops
+    const handleIncidentNew = debounce((data: Incident) => {
       optionsRef.current.onIncidentNew?.(data);
-    };
+    }, 300);
 
-    const handleIncidentUpdated = (data: Incident) => {
+    const handleIncidentUpdated = debounce((data: Incident) => {
       optionsRef.current.onIncidentUpdated?.(data);
-    };
+    }, 300);
 
-    const handleStepUpdate = (data: StepUpdate) => {
+    const handleStepUpdate = debounce((data: StepUpdate) => {
       optionsRef.current.onStepUpdate?.(data);
-    };
+    }, 300);
 
-    const handleMonitorStatus = (data: { id: string; status: string }) => {
+    const handleMonitorStatus = debounce((data: { id: string; status: string }) => {
       optionsRef.current.onMonitorStatus?.(data);
-    };
+    }, 300);
 
     socket.on('incident:new', handleIncidentNew);
     socket.on('incident:updated', handleIncidentUpdated);

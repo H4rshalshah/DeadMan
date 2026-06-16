@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { incidentsApi } from '@/lib/api';
 import type { Incident, DashboardSummary } from '@/lib/types';
 
@@ -42,8 +42,12 @@ export function useIncident(id: string) {
   const [incident, setIncident] = useState<(Incident & { executions?: unknown[]; runbook?: unknown }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fetchingRef = useRef(false);
 
   const fetchIncident = useCallback(async () => {
+    // Prevent concurrent fetches
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
     try {
       setLoading(true);
       const data = await incidentsApi.getById(id);
@@ -53,6 +57,7 @@ export function useIncident(id: string) {
       setError(err instanceof Error ? err.message : 'Failed to fetch incident');
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
   }, [id]);
 
