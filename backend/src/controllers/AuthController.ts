@@ -124,13 +124,22 @@ export class AuthController {
     }
     const state = generateOAuthState();
     const redirectUri = config.googleCallbackUrl;
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=email%20profile&state=${encodeURIComponent(state)}`;
+    // Use OpenID Connect scope (openid + email + profile) — this is the standard
+    // scope for Google Sign-In. Without 'openid', some Google projects block access.
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&state=${encodeURIComponent(state)}`;
     res.redirect(url);
   }
 
   static async googleCallback(req: Request, res: Response): Promise<void> {
     try {
-      const { code, state } = req.query;
+      const { code, state, error: googleError } = req.query;
+
+      // Handle Google-side errors (access_denied, server_error, etc.)
+      if (googleError) {
+        console.warn('Google OAuth error:', googleError, req.query.error_description);
+        res.redirect(`${FRONTEND_URL}/auth/login?error=${googleError}`);
+        return;
+      }
 
       if (!state || typeof state !== 'string' || !oauthStateStore.has(state)) {
         res.redirect(`${FRONTEND_URL}/auth/login?error=invalid_state`);
