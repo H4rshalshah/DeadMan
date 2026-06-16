@@ -7,9 +7,10 @@ import jwt from 'jsonwebtoken';
 import { UserModel, WorkspaceMemberModel } from '../models/User';
 import { EmailService } from '../services/EmailService';
 import { v4 as uuidv4 } from 'uuid';
+import { config } from '../config';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'deadman-dev-jwt-secret-change-in-production';
-const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').trim();
+const JWT_SECRET = config.jwtSecret;
+const FRONTEND_URL = config.frontendUrl;
 
 // Store OAuth state values for CSRF protection (in production, use Redis)
 const oauthStateStore = new Map<string, number>();
@@ -135,8 +136,8 @@ export class AuthController {
       return;
     }
     const state = generateOAuthState();
-    const redirectUri = `${(process.env.BACKEND_URL || 'http://localhost:3001').trim()}/api/auth/google/callback`;
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile&state=${state}`;
+    const redirectUri = `${config.backendUrl}/api/auth/google/callback`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=email%20profile&state=${encodeURIComponent(state)}`;
     res.redirect(url);
   }
 
@@ -171,7 +172,7 @@ export class AuthController {
           code,
           client_id: clientId,
           client_secret: clientSecret,
-          redirect_uri: `${(process.env.BACKEND_URL || 'http://localhost:3001').trim()}/api/auth/google/callback`,
+          redirect_uri: `${config.backendUrl}/api/auth/google/callback`,
           grant_type: 'authorization_code',
         }),
       });
@@ -208,7 +209,8 @@ export class AuthController {
       return;
     }
     const state = generateOAuthState();
-    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user:email&state=${state}`;
+    const redirectUri = `${config.backendUrl}/api/auth/github/callback`;
+    const url = `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email&state=${encodeURIComponent(state)}`;
     res.redirect(url);
   }
 
@@ -246,6 +248,7 @@ export class AuthController {
           client_id: clientId,
           client_secret: clientSecret,
           code,
+          redirect_uri: `${config.backendUrl}/api/auth/github/callback`,
         }),
       });
 

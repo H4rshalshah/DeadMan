@@ -4,7 +4,7 @@ dotenv.config();
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
-  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/deadman',
+  mongoUri: process.env.MONGO_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/deadman',
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
   jwtSecret: process.env.JWT_SECRET || 'deadman-dev-jwt-secret-change-in-production',
   sessionSecret: process.env.SESSION_SECRET || 'deadman-dev-session-secret',

@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { ProjectModel } from '../models/Project';
+import { WorkspaceMemberModel, UserRole } from '../models/User';
 import { z } from 'zod';
 import axios from 'axios';
 
@@ -25,6 +26,31 @@ const updateProjectSchema = z.object({
 });
 
 export class ProjectController {
+  private static async requireWorkspaceRole(
+    req: AuthRequest,
+    res: Response,
+    workspaceId: string,
+    roles: UserRole[] = ['owner', 'admin', 'engineer', 'viewer']
+  ): Promise<boolean> {
+    const role = await WorkspaceMemberModel.getRole(req.userId!, workspaceId);
+    if (!role || !roles.includes(role)) {
+      res.status(403).json({ error: 'Insufficient permissions' });
+      return false;
+    }
+    req.workspaceRole = role;
+    return true;
+  }
+
+  private static async loadProjectForUser(req: AuthRequest, res: Response, roles?: UserRole[]) {
+    const project = await ProjectModel.findById(req.params.id);
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return null;
+    }
+    const allowed = await ProjectController.requireWorkspaceRole(req, res, project.workspaceId, roles);
+    return allowed ? project : null;
+  }
+
   static async list(req: AuthRequest, res: Response): Promise<void> {
     try {
       const { workspaceId } = req.query;
@@ -32,6 +58,7 @@ export class ProjectController {
         res.status(400).json({ error: 'workspaceId is required' });
         return;
       }
+      if (!await ProjectController.requireWorkspaceRole(req, res, workspaceId as string)) return;
       const projects = await ProjectModel.findByWorkspace(workspaceId as string);
       res.json(projects);
     } catch (error) {
@@ -41,11 +68,8 @@ export class ProjectController {
 
   static async getById(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const project = await ProjectModel.findById(req.params.id);
-      if (!project) {
-        res.status(404).json({ error: 'Project not found' });
-        return;
-      }
+      const project = await ProjectController.loadProjectForUser(req, res);
+      if (!project) return;
       res.json(project);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch project' });
@@ -55,6 +79,7 @@ export class ProjectController {
   static async create(req: AuthRequest, res: Response): Promise<void> {
     try {
       const parsed = createProjectSchema.parse(req.body);
+      if (!await ProjectController.requireWorkspaceRole(req, res, parsed.workspaceId, ['owner', 'admin', 'engineer'])) return;
       const project = await ProjectModel.create(parsed);
       res.status(201).json(project);
     } catch (error) {
@@ -69,6 +94,8 @@ export class ProjectController {
   static async update(req: AuthRequest, res: Response): Promise<void> {
     try {
       const updates = updateProjectSchema.parse(req.body);
+      const existing = await ProjectController.loadProjectForUser(req, res, ['owner', 'admin', 'engineer']);
+      if (!existing) return;
       const project = await ProjectModel.update(req.params.id, updates as any);
       if (!project) {
         res.status(404).json({ error: 'Project not found' });
@@ -86,6 +113,8 @@ export class ProjectController {
 
   static async delete(req: AuthRequest, res: Response): Promise<void> {
     try {
+      const existing = await ProjectController.loadProjectForUser(req, res, ['owner', 'admin']);
+      if (!existing) return;
       const deleted = await ProjectModel.delete(req.params.id);
       if (!deleted) {
         res.status(404).json({ error: 'Project not found' });
@@ -99,6 +128,9 @@ export class ProjectController {
 
   static async regenerateWebhookToken(req: AuthRequest, res: Response): Promise<void> {
     try {
+      const project = await ProjectController.loadProjectForUser(req, res, ['owner', 'admin']);
+      if (!project) return;
+
       const token = await ProjectModel.regenerateWebhookToken(req.params.id);
       if (!token) {
         res.status(404).json({ error: 'Project not found' });
@@ -112,11 +144,8 @@ export class ProjectController {
 
   static async testHealthCheck(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const project = await ProjectModel.findById(req.params.id);
-      if (!project) {
-        res.status(404).json({ error: 'Project not found' });
-        return;
-      }
+      const project = await ProjectController.loadProjectForUser(req, res, ['owner', 'admin', 'engineer']);
+      if (!project) return;
 
       if (!project.healthCheckUrl) {
         res.status(400).json({ error: 'No health check URL configured' });
@@ -169,6 +198,8 @@ export class ProjectController {
 
   static async getHealthChecks(req: AuthRequest, res: Response): Promise<void> {
     try {
+      const project = await ProjectController.loadProjectForUser(req, res);
+      if (!project) return;
       const { HealthCheckModel } = await import('../models/Project');
       const records = await HealthCheckModel.findByProject(req.params.id);
       res.json(records);

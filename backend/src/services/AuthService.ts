@@ -3,7 +3,7 @@ import { config } from '../config';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'deadman-dev-jwt-secret-change-in-production';
+const JWT_SECRET = config.jwtSecret;
 const SALT_ROUNDS = 12;
 const TOKEN_EXPIRY = '7d';
 

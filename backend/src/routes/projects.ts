@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ProjectController } from '../controllers/ProjectController';
-import { requireAuth, requireWorkspaceRole } from '../middleware/auth';
+import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -11,7 +11,7 @@ router.post('/', ProjectController.create);
 router.get('/:id', ProjectController.getById);
 router.patch('/:id', ProjectController.update);
 router.delete('/:id', ProjectController.delete);
-router.post('/:id/regenerate-webhook-token', requireWorkspaceRole('owner', 'admin'), ProjectController.regenerateWebhookToken);
+router.post('/:id/regenerate-webhook-token', ProjectController.regenerateWebhookToken);
 router.post('/:id/health-checks/test', ProjectController.testHealthCheck);
 router.get('/:id/health-checks', ProjectController.getHealthChecks);
 

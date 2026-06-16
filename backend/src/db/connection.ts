@@ -32,6 +32,13 @@ export async function initializeDatabase(): Promise<void> {
     usingMemoryStore = false;
     logger.info('Connected to MongoDB database');
   } catch (error) {
+    if (config.isProduction) {
+      logger.error('Failed to connect to MongoDB in production', {
+        error: error instanceof Error ? error.message : error,
+      });
+      throw error;
+    }
+
     usingMemoryStore = true;
     seedMemoryStore();
     logger.warn('Failed to connect to MongoDB; using in-memory demo store', {

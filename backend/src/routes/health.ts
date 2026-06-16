@@ -39,7 +39,7 @@ router.get('/', async (_req, res) => {
     health.checks.redis = 'healthy';
   } catch {
     health.checks.redis = 'unhealthy';
-    if (health.checks.database !== 'unhealthy') {
+    if (!config.isProduction && health.checks.database !== 'unhealthy') {
       health.status = 'degraded';
     }
   }
