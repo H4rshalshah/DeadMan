@@ -13,6 +13,7 @@ import { RunbookDocument } from './models/Runbook';
 import { ActionExecutionDocument } from './models/AuditLog';
 import { MonitorDocument, SettingDocument, WebhookLogDocument } from './models/Operational';
 import winston from 'winston';
+import { HealthCheckScheduler } from './services/HealthCheckScheduler';
 
 // Routes
 import incidentRoutes from './routes/incidents';
@@ -22,6 +23,11 @@ import analyticsRoutes from './routes/analytics';
 import monitorRoutes from './routes/monitors';
 import healthRoutes from './routes/health';
 import settingsRoutes from './routes/settings';
+import authRoutes from './routes/auth';
+import workspaceRoutes from './routes/workspaces';
+import { inviteRouter } from './routes/workspaces';
+import projectRoutes from './routes/projects';
+import alertWebhookRoutes from './routes/alertWebhooks';
 
 const logger = winston.createLogger({
   level: config.isDevelopment ? 'debug' : 'info',
@@ -82,9 +88,14 @@ app.use((_req, res, next) => {
 });
 
 // Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/workspaces', workspaceRoutes);
+app.use('/api', inviteRouter);
+app.use('/api/projects', projectRoutes);
 app.use('/api/incidents', incidentRoutes);
 app.use('/api/runbooks', runbookRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/webhooks/alerts', alertWebhookRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/monitors', monitorRoutes);
 app.use('/api/health', healthRoutes);
@@ -107,6 +118,16 @@ try {
   worker = initWorker();
 } catch (error) {
   logger.warn('Failed to initialize BullMQ worker (Redis may not be available)');
+}
+
+// Initialize Health Check Scheduler
+try {
+  HealthCheckScheduler.start();
+  logger.info('Health check scheduler initialized');
+} catch (error) {
+  logger.warn('Failed to start health check scheduler', {
+    error: error instanceof Error ? error.message : error,
+  });
 }
 
 // Graceful shutdown

@@ -2,6 +2,71 @@ export type IncidentSeverity = 'critical' | 'high' | 'medium' | 'low';
 export type IncidentStatus = 'open' | 'investigating' | 'mitigating' | 'resolved';
 export type ExecutionStatus = 'pending' | 'running' | 'success' | 'failed' | 'skipped';
 export type StepType = 'http' | 'shell' | 'slack' | 'aws' | 'wait' | 'condition';
+export type UserRole = 'owner' | 'admin' | 'engineer' | 'viewer';
+export type ProjectEnvironment = 'production' | 'staging' | 'development';
+export type ProjectStatus = 'healthy' | 'degraded' | 'down' | 'unknown';
+
+// Auth / User types
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  authProvider: string;
+  emailVerified: boolean;
+  currentWorkspaceId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  ownerId: string;
+  role?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WorkspaceMember {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  role: string;
+  invitedBy: string | null;
+  joinedAt: string | null;
+  user?: User;
+  createdAt: string;
+}
+
+export interface Invite {
+  id: string;
+  workspaceId: string;
+  email: string;
+  role: string;
+  token: string;
+  invitedBy: string;
+  expiresAt: string;
+  acceptedAt: string | null;
+  createdAt: string;
+}
+
+export interface Project {
+  id: string;
+  workspaceId: string;
+  name: string;
+  description: string | null;
+  environment: ProjectEnvironment;
+  baseUrl: string | null;
+  healthCheckUrl: string | null;
+  repositoryUrl: string | null;
+  status: ProjectStatus;
+  webhookToken: string;
+  healthCheckInterval: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface Incident {
   id: string;
@@ -117,4 +182,28 @@ export interface StepUpdate {
   dryRun?: boolean;
   message?: string;
   durationMs?: number;
+}
+
+// Auth response types
+export interface AuthTokensResponse {
+  accessToken: string;
+  user: User;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  devResetLink?: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+}
+
+export interface VerifyEmailResponse {
+  success: boolean;
+}
+
+export interface LogoutResponse {
+  success: boolean;
 }

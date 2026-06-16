@@ -2,7 +2,8 @@
 
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import ThemeToggle from '@/components/layout/ThemeToggle';
@@ -10,12 +11,40 @@ import ToastContainer from '@/components/ui/ToastContainer';
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLanding = pathname === '/';
+  const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  if (isLanding) {
+  const isLanding = pathname === '/';
+  const isAuth = pathname?.startsWith('/auth');
+
+  // Auth check for protected routes
+  useEffect(() => {
+    if (isLanding || isAuth) {
+      setCheckingAuth(false);
+      return;
+    }
+    const token = localStorage.getItem('deadman_token');
+    if (!token) {
+      router.push('/auth/login');
+    } else {
+      setCheckingAuth(false);
+    }
+  }, [pathname, isLanding, isAuth, router]);
+
+  if (checkingAuth) {
+    return (
+      <div className="flex min-h-screen bg-deadman-bg items-center justify-center">
+        <div className="flex items-center gap-3">
+          <span className="w-2 h-2 bg-deadman-cyan rounded-full animate-pulse" />
+          <span className="text-sm text-deadman-muted">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLanding || isAuth) {
     return (
       <>
-        {/* Theme toggle fixed top-right on landing page */}
         <div className="fixed top-4 right-4 z-50">
           <ThemeToggle />
         </div>

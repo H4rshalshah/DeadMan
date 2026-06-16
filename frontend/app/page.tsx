@@ -81,18 +81,24 @@ export default function LandingPage() {
             transition={{ delay: 0.7 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-        <Link
-          href="/dashboard"
-          className="group flex items-center gap-2 px-8 py-3.5 bg-deadman-cyan text-deadman-bg font-semibold rounded-xl hover:bg-deadman-cyan/90 transition-all hover:shadow-lg hover:shadow-deadman-cyan/20 hover:shadow-deadman-cyanLight/10"
-        >
-          View Dashboard
-          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-        </Link>
-            <a
-              href="#how-it-works"
+            <Link
+              href="/auth/signup"
+              className="group flex items-center gap-2 px-8 py-3.5 bg-deadman-cyan text-deadman-bg font-semibold rounded-xl hover:bg-deadman-cyan/90 transition-all hover:shadow-lg hover:shadow-deadman-cyan/20"
+            >
+              Start Free
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/auth/login"
               className="flex items-center gap-2 px-8 py-3.5 border border-deadman-border text-deadman-text font-medium rounded-xl hover:bg-deadman-surface transition-all"
             >
-              Read Docs
+              Sign In
+            </Link>
+            <a
+              href="#how-it-works"
+              className="flex items-center gap-2 px-8 py-3.5 text-deadman-muted hover:text-deadman-text transition-colors text-sm"
+            >
+              How it works
             </a>
           </motion.div>
         </motion.div>
