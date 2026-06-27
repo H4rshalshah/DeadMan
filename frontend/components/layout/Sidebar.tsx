@@ -24,6 +24,7 @@ const navItems = [
   { href: '/incidents', label: 'Incidents', icon: AlertTriangle },
   { href: '/runbooks', label: 'Runbooks', icon: BookOpen },
   { href: '/projects', label: 'Projects', icon: Server },
+  { href: '/endpoints', label: 'Endpoints', icon: Activity },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },

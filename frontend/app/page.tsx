@@ -2,7 +2,11 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, AlertTriangle, Clock, GitBranch, Shield, BarChart3, Zap, Github, Linkedin, Twitter, Mail, ChevronDown } from 'lucide-react';
+import {
+  ArrowRight, AlertTriangle, Clock, GitBranch, BarChart3, Zap,
+  Github, Linkedin, Twitter, Mail, ChevronDown, Users, Activity,
+  Bell, MessageSquare, BookOpen
+} from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 
 const fadeInUp = {
@@ -12,16 +16,42 @@ const fadeInUp = {
   transition: { duration: 0.6 },
 };
 
-const stagger = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.4, staggerChildren: 0.1 },
-};
-
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const bgOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.5]);
+
+  const problems = [
+    { icon: AlertTriangle, title: 'Production Incidents Cause Downtime', desc: 'Every minute of downtime costs revenue, reputation, and customer trust. Yet most teams react instead of preventing.' },
+    { icon: Clock, title: 'Alarms Wake You at 2 AM', desc: 'Pagers go off repeatedly. Context switching eats precious minutes while your system burns. Sleep becomes a luxury.' },
+    { icon: GitBranch, title: 'Manual Escalations Are Slow', desc: 'SSH into servers, grep through logs, run scripts by hand. Every incident becomes a chaotic fire drill with no playbook.' },
+  ];
+
+  const solutions = [
+    { icon: Bell, title: 'Automated Alert Handling', desc: 'Alerts from any source are ingested, deduplicated, and prioritized. PulseOps automatically classifies severity and routes to the right team.' },
+    { icon: BookOpen, title: 'Intelligent Runbook Execution', desc: 'When an incident matches trigger conditions, PulseOps executes runbooks automatically — calling APIs, sending notifications, and logging every step.' },
+    { icon: MessageSquare, title: 'Seamless Team Communication', desc: 'Real-time notifications via Slack, email, and in-app alerts. Keep everyone informed without the noise.' },
+  ];
+
+  const steps = [
+    { step: '01', title: 'Create Workspace', desc: 'Set up your incident response workspace in seconds. Invite your team and define roles — owner, admin, engineer, or viewer.' },
+    { step: '02', title: 'Add Team Members', desc: 'Invite colleagues via email. They get a secure invite link. New members sign up and join your workspace instantly.' },
+    { step: '03', title: 'Upload Project', desc: 'Register your project with name, environment, repository URL, and base URL. PulseOps prepares to monitor your infrastructure.' },
+    { step: '04', title: 'Auto-Detect APIs', desc: 'PulseOps scans your backend base URL and OpenAPI specs to automatically discover API endpoints, methods, and authentication requirements.' },
+    { step: '05', title: 'Configure Monitoring', desc: 'Set check intervals, expected status codes, timeouts, and failure thresholds for each endpoint. Enable health checks with a single click.' },
+    { step: '06', title: 'Receive Alerts', desc: 'When an endpoint fails, response time spikes, or error rate exceeds threshold — PulseOps creates an incident and notifies your team immediately.' },
+    { step: '07', title: 'Execute Runbooks', desc: 'Automated runbooks trigger on incidents. They send notifications, call APIs, restart services, and log every action — all without human intervention.' },
+  ];
+
+  const features = [
+    { icon: Zap, title: 'Alert Ingestion', desc: 'Ingest alerts from Grafana, Datadog, Prometheus, and any custom source via a universal webhook endpoint with automatic deduplication.' },
+    { icon: Activity, title: 'API Monitoring', desc: 'Monitor endpoint health, response times, and status codes. Get alerted when APIs degrade or go down with configurable thresholds.' },
+    { icon: Users, title: 'Workspace Management', desc: 'Organize teams, projects, and settings into isolated workspaces. Each workspace has its own members, roles, and configuration.' },
+    { icon: MessageSquare, title: 'Team Collaboration', desc: 'Real-time incident updates, team comments, assignment workflows, and escalation policies keep everyone aligned during incidents.' },
+    { icon: BookOpen, title: 'Automated Runbooks', desc: 'Visual runbook builder with HTTP, shell, Slack, AWS, and wait steps. Execute automatically on incident triggers with full audit trails.' },
+    { icon: Bell, title: 'Real-Time Incident Status', desc: 'Live dashboard with WebSocket-powered updates. See incidents open, investigating, mitigating, or resolved in real time.' },
+    { icon: Mail, title: 'Email Notifications', desc: 'Get notified via email for critical incidents, status changes, and runbook failures. Configurable notification preferences per user.' },
+    { icon: BarChart3, title: 'Analytics Dashboard', desc: 'Track MTTR trends, resolution rates, incident sources, and team performance. Identify bottlenecks and improve over time.' },
+  ];
 
   return (
     <div className="bg-pulseops-bg text-pulseops-text overflow-hidden">
@@ -31,8 +61,6 @@ export default function LandingPage() {
           className="absolute inset-0 bg-gradient-to-b from-pulseops-cyanGlow via-pulseops-cyanLight/5 to-pulseops-bg pointer-events-none"
           style={{ opacity: bgOpacity }}
         />
-        
-        {/* Grid background */}
         <div className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage: `linear-gradient(#7EC8E3 1px, transparent 1px), linear-gradient(90deg, #7EC8E3 1px, transparent 1px)`,
@@ -115,15 +143,14 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
               Incident Response is Broken
             </h2>
-            <p className="text-pulseops-muted text-lg">The old way costs you sleep, customers, and revenue</p>
+            <p className="text-pulseops-muted text-lg">
+              Production incidents, alerts at 2 AM, downtime, and manual escalations
+              are slow, stressful, and error-prone.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: AlertTriangle, title: 'Alert at 2 AM', desc: 'Pager goes off for the third time this week. You groggily reach for your laptop.', crossed: true },
-              { icon: Clock, title: '20 min to understand', desc: 'Context switching costs you precious minutes. What changed? Who deployed?', crossed: true },
-              { icon: GitBranch, title: 'Manual chaos', desc: 'SSH into boxes, check logs, run scripts. Every incident is a fire drill.', crossed: true },
-            ].map((item, i) => (
+            {problems.map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -135,8 +162,8 @@ export default function LandingPage() {
                 <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-pulseops-border flex items-center justify-center group-hover:bg-pulseops-danger/10 transition-colors">
                   <item.icon size={24} className="text-pulseops-danger" />
                 </div>
-                <h3 className="text-lg font-heading font-semibold mb-2 line-through opacity-50">{item.title}</h3>
-                <p className="text-sm text-pulseops-muted">{item.desc}</p>
+                <h3 className="text-lg font-heading font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-pulseops-muted leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -152,39 +179,97 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4 bg-pulseops-surface/50">
+      {/* Solution Section */}
+      <section className="py-24 px-4 bg-pulseops-surface/50">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeInUp} className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              How PulseOps Fixes Incident Response
+            </h2>
+            <p className="text-pulseops-muted text-lg">
+              Automate alert handling, runbook execution, and team communication —
+              so you can resolve incidents before they escalate.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {solutions.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="bg-pulseops-surface border border-pulseops-cyan/20 rounded-xl p-6 text-center group hover:border-pulseops-cyan/40 hover:shadow-lg hover:shadow-pulseops-cyan/5 transition-all"
+              >
+                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-pulseops-cyan/10 flex items-center justify-center group-hover:bg-pulseops-cyan/20 transition-colors">
+                  <item.icon size={24} className="text-pulseops-cyan" />
+                </div>
+                <h3 className="text-lg font-heading font-semibold mb-2 text-pulseops-cyan">{item.title}</h3>
+                <p className="text-sm text-pulseops-muted leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works — 7 Steps */}
+      <section id="how-it-works" className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeInUp} className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">How It Works</h2>
-            <p className="text-pulseops-muted text-lg">From alert to resolution in four automated steps</p>
+            <p className="text-pulseops-muted text-lg">From setup to resolution — PulseOps automates the entire incident lifecycle</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { step: '01', title: 'Alert', desc: 'Grafana, Datadog, Prometheus, or manual trigger', color: 'text-pulseops-danger' },
-              { step: '02', title: 'Detect', desc: 'AI-powered analysis identifies root cause', color: 'text-pulseops-warning' },
-              { step: '03', title: 'Execute', desc: 'Runbook runs automatically with every step logged', color: 'text-pulseops-cyan' },
-              { step: '04', title: 'Report', desc: 'Situation report generated for post-mortem', color: 'text-pulseops-success' },
-            ].map((item, i) => (
+          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {/* Row 1: Steps 1-4 */}
+            {steps.slice(0, 4).map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: i * 0.1 }}
                 className="relative text-center"
               >
                 <motion.div
-                  className={`text-5xl font-heading font-bold ${item.color} mb-4`}
+                  className="text-4xl md:text-5xl font-heading font-bold text-pulseops-cyan mb-3"
                   whileHover={{ scale: 1.1 }}
                 >
                   {item.step}
                 </motion.div>
-                <h3 className="text-lg font-heading font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm text-pulseops-muted">{item.desc}</p>
+                <h3 className="text-base font-heading font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-pulseops-muted leading-relaxed px-2">{item.desc}</p>
                 {i < 3 && (
-                  <div className="hidden md:block absolute top-8 -right-3 text-pulseops-muted/30">
+                  <div className="hidden lg:block absolute top-6 -right-3 text-pulseops-muted/20">
+                    <ArrowRight size={20} />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Row 2: Steps 5-7 */}
+          <div className="grid md:grid-cols-3 gap-6 mt-10 max-w-4xl mx-auto">
+            {steps.slice(4).map((item, i) => (
+              <motion.div
+                key={i + 4}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="relative text-center"
+              >
+                <motion.div
+                  className="text-4xl md:text-5xl font-heading font-bold text-pulseops-cyan mb-3"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  {item.step}
+                </motion.div>
+                <h3 className="text-base font-heading font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-pulseops-muted leading-relaxed px-2">{item.desc}</p>
+                {i < 2 && (
+                  <div className="hidden lg:block absolute top-6 -right-3 text-pulseops-muted/20">
                     <ArrowRight size={20} />
                   </div>
                 )}
@@ -195,35 +280,28 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 px-4">
+      <section className="py-24 px-4 bg-pulseops-surface/50">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Enterprise Features</h2>
-            <p className="text-pulseops-muted text-lg">Everything you need to run incident response at scale</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Everything You Need</h2>
+            <p className="text-pulseops-muted text-lg">Enterprise-grade features for modern incident response teams</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Zap, title: 'Webhook Ingestion', desc: 'Receive alerts from Grafana, Datadog, Prometheus, and any custom source via universal webhook endpoint.' },
-              { icon: GitBranch, title: 'Runbook Engine', desc: 'Visual drag-and-drop runbook builder with HTTP, Shell, Slack, AWS, and Wait step types.' },
-              { icon: Shield, title: 'Dry-Run Mode', desc: 'Test runbooks without side effects. Safe execution mode for validating complex workflows.' },
-              { icon: BarChart3, title: 'Situation Reports', desc: 'AI-generated reports combining recent deploys, error rates, and similar past incidents.' },
-              { icon: Clock, title: 'MTTR Analytics', desc: 'Track Mean Time To Resolution trends, identify bottlenecks, and measure team performance.' },
-              { icon: Zap, title: 'Slack Integration', desc: 'Real-time notifications, escalation workflows, and runbook-triggered Slack messages.' },
-            ].map((feature, i) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {features.map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-pulseops-surface border border-pulseops-border rounded-xl p-6 hover:border-pulseops-cyanLight/30 hover:bg-pulseops-cyanLight/5 transition-all group hover:shadow-lg hover:shadow-pulseops-cyanLight/5"
+                transition={{ delay: i * 0.08 }}
+                className="bg-pulseops-surface border border-pulseops-border rounded-xl p-5 hover:border-pulseops-cyanLight/30 hover:bg-pulseops-cyanLight/5 transition-all group hover:shadow-lg hover:shadow-pulseops-cyanLight/5"
               >
-                <div className="w-10 h-10 rounded-lg bg-pulseops-cyanLight/15 flex items-center justify-center mb-4 group-hover:bg-pulseops-cyanLight/25 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-pulseops-cyanLight/15 flex items-center justify-center mb-3 group-hover:bg-pulseops-cyanLight/25 transition-colors">
                   <feature.icon size={20} className="text-pulseops-cyanLight" />
                 </div>
-                <h3 className="font-heading font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-pulseops-muted">{feature.desc}</p>
+                <h3 className="font-heading font-semibold mb-1 text-sm">{feature.title}</h3>
+                <p className="text-xs text-pulseops-muted leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -231,7 +309,7 @@ export default function LandingPage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="py-24 px-4 bg-pulseops-surface/50">
+      <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <motion.h2 {...fadeInUp} className="text-3xl md:text-4xl font-heading font-bold mb-4">
             Built For Modern Infrastructure
@@ -249,12 +327,12 @@ export default function LandingPage() {
             {[
               { name: 'Next.js', desc: 'React Framework' },
               { name: 'Node.js', desc: 'Runtime' },
-              { name: 'PostgreSQL', desc: 'Database' },
+              { name: 'TypeScript', desc: 'Language' },
+              { name: 'MongoDB', desc: 'Database' },
               { name: 'Redis', desc: 'Queue & Cache' },
               { name: 'BullMQ', desc: 'Job Queue' },
               { name: 'Socket.io', desc: 'WebSocket' },
               { name: 'Docker', desc: 'Container' },
-              { name: 'TypeScript', desc: 'Language' },
             ].map((tech, i) => (
               <motion.div
                 key={i}
@@ -273,7 +351,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-4">
+      <section className="py-24 px-4 bg-pulseops-surface/50">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -284,13 +362,13 @@ export default function LandingPage() {
             Ready to automate your incident response?
           </h2>
           <p className="text-pulseops-muted text-lg mb-8">
-            Get started in minutes. Connect your monitoring, create runbooks, and let PulseOps handle the rest.
+            Get started in minutes. Create your workspace, invite your team, and let PulseOps handle the rest.
           </p>
           <Link
             href="/auth/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-pulseops-cyan text-pulseops-bg font-semibold rounded-xl hover:bg-pulseops-cyan/90 transition-all hover:shadow-lg hover:shadow-pulseops-cyan/20"
           >
-            Get Started
+            Get Started Free
             <ArrowRight size={18} />
           </Link>
         </motion.div>

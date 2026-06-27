@@ -28,6 +28,7 @@ import workspaceRoutes from './routes/workspaces';
 import { inviteRouter } from './routes/workspaces';
 import projectRoutes from './routes/projects';
 import alertWebhookRoutes from './routes/alertWebhooks';
+import apiEndpointRoutes from './routes/endpoints';
 
 const logger = winston.createLogger({
   level: config.isDevelopment ? 'debug' : 'info',
@@ -100,6 +101,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/monitors', monitorRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/endpoints', apiEndpointRoutes);
 
 // 404 handler
 app.use((_req, res) => {
