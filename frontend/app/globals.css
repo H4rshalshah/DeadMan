@@ -15,13 +15,13 @@
     --color-muted: #6B7280;
   }
 
-  /* Dark theme - solid dark backgrounds */
+  /* Dark theme - pure neutral black (no violet/blue tones) */
   .dark {
-    --color-bg: #0B0D11;
-    --color-surface: #13161C;
-    --color-border: rgba(255, 255, 255, 0.06);
-    --color-text: #E8EBF0;
-    --color-text-secondary: #9CA3AF;
+    --color-bg: #0A0A0A;
+    --color-surface: #141414;
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-text: #EDEDED;
+    --color-text-secondary: #A0A0A0;
     --color-muted: #6B7280;
   }
 

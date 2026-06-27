@@ -12,14 +12,14 @@ export default function SeverityBarChart({ data }: SeverityBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1E2330" />
-        <XAxis dataKey="name" tick={{ fill: '#6B7A99', fontSize: 10 }} axisLine={{ stroke: '#1E2330' }} tickLine={false} />
-        <YAxis tick={{ fill: '#6B7A99', fontSize: 11 }} axisLine={{ stroke: '#1E2330' }} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+        <XAxis dataKey="name" tick={{ fill: '#A0A0A0', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.08)' }} tickLine={false} />
+        <YAxis tick={{ fill: '#A0A0A0', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.08)' }} tickLine={false} />
         <Tooltip
-          contentStyle={{ backgroundColor: '#111318', border: '1px solid #1E2330', borderRadius: '8px', fontSize: '12px', color: '#E8EBF0' }}
-          labelStyle={{ color: '#6B7A99' }}
+          contentStyle={{ backgroundColor: '#141414', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px', color: '#EDEDED' }}
+          labelStyle={{ color: '#A0A0A0' }}
         />
-        <Legend wrapperStyle={{ fontSize: '11px', color: '#6B7A99' }} />
+        <Legend wrapperStyle={{ fontSize: '11px', color: '#A0A0A0' }} />
         <Bar dataKey="critical" fill="#FF3B5C" stackId="a" />
         <Bar dataKey="high" fill="#FFB020" stackId="a" />
         <Bar dataKey="medium" fill="#00D4FF" stackId="a" />

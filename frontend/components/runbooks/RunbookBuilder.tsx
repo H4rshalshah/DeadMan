@@ -44,7 +44,7 @@ const initialNodes: Node[] = [
 ];
 
 const initialEdges: Edge[] = [
-  { id: 'e-start-end', source: 'start', target: 'end', animated: true, style: { stroke: '#1E2330', strokeDasharray: '5 5' } },
+  { id: 'e-start-end', source: 'start', target: 'end', animated: true, style: { stroke: 'rgba(255,255,255,0.08)', strokeDasharray: '5 5' } },
 ];
 
 interface RunbookBuilderProps {
@@ -58,7 +58,7 @@ const stepTypes = [
   { type: 'slack', label: 'Slack Notify', icon: MessageSquare, color: '#FFB020' },
   { type: 'aws', label: 'AWS Action', icon: Cloud, color: '#FF3B5C' },
   { type: 'wait', label: 'Wait', icon: Clock, color: '#6B7A99' },
-  { type: 'condition', label: 'Condition', icon: GitFork, color: '#E8EBF0' },
+  { type: 'condition', label: 'Condition', icon: GitFork, color: '#EDEDED' },
 ];
 
 export default function RunbookBuilder({ initialSteps, onSave }: RunbookBuilderProps) {
@@ -208,26 +208,26 @@ export default function RunbookBuilder({ initialSteps, onSave }: RunbookBuilderP
           onNodeClick={onNodeClick}
           nodeTypes={nodeTypes}
           fitView
-          style={{ backgroundColor: '#0A0C10' }}
+          style={{ backgroundColor: '#0A0A0A' }}
           defaultEdgeOptions={{
-            style: { stroke: '#1E2330', strokeWidth: 2 },
+            style: { stroke: 'rgba(255,255,255,0.08)', strokeWidth: 2 },
           }}
         >
           <Controls
             className="!bg-pulseops-surface !border-pulseops-border !rounded-lg"
             style={{
-              '--reactflow-control-bg': '#111318',
-              '--reactflow-control-border': '#1E2330',
-              '--reactflow-control-color': '#E8EBF0',
-              '--reactflow-control-hover': '#1E2330',
+              '--reactflow-control-bg': '#141414',
+              '--reactflow-control-border': 'rgba(255,255,255,0.08)',
+              '--reactflow-control-color': '#EDEDED',
+              '--reactflow-control-hover': 'rgba(255,255,255,0.12)',
             } as React.CSSProperties}
           />
           <MiniMap
-            style={{ backgroundColor: '#0A0C10', border: '1px solid #1E2330', borderRadius: '8px' }}
-            nodeColor="#1E2330"
-            maskColor="#0A0C10CC"
+            style={{ backgroundColor: '#0A0A0A', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px' }}
+            nodeColor="rgba(255,255,255,0.12)"
+            maskColor="#0A0A0ACC"
           />
-          <Background color="#1E2330" gap={20} />
+          <Background color="rgba(255,255,255,0.06)" gap={20} />
         </ReactFlow>
       </div>
     </div>

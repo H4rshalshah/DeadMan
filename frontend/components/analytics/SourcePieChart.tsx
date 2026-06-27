@@ -28,10 +28,10 @@ export default function SourcePieChart({ data, colors }: SourcePieChartProps) {
           ))}
         </Pie>
         <Tooltip
-          contentStyle={{ backgroundColor: '#111318', border: '1px solid #1E2330', borderRadius: '8px', fontSize: '12px', color: '#E8EBF0' }}
-          labelStyle={{ color: '#6B7A99' }}
+          contentStyle={{ backgroundColor: '#141414', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '12px', color: '#EDEDED' }}
+          labelStyle={{ color: '#A0A0A0' }}
         />
-        <Legend wrapperStyle={{ fontSize: '11px', color: '#6B7A99' }} />
+        <Legend wrapperStyle={{ fontSize: '11px', color: '#A0A0A0' }} />
       </PieChart>
     </ResponsiveContainer>
   );

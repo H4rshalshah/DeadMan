@@ -19,7 +19,7 @@ const nodeColors = {
   slack: '#FFB020',
   aws: '#FF3B5C',
   wait: '#6B7A99',
-  condition: '#E8EBF0',
+  condition: '#EDEDED',
 };
 
 function StepNode({ data, selected }: NodeProps) {
@@ -34,7 +34,7 @@ function StepNode({ data, selected }: NodeProps) {
           ? 'border-pulseops-cyan shadow-lg shadow-pulseops-cyan/20'
           : 'border-pulseops-border hover:border-pulseops-cyan/50'
       }`}
-      style={{ backgroundColor: '#111318' }}
+      style={{ backgroundColor: '#141414' }}
     >
       <Handle
         type="target"

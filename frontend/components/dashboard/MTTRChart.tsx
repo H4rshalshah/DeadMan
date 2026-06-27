@@ -48,29 +48,29 @@ export default function MTTRChart({ data: propData, height = 300 }: MTTRChartPro
       <h3 className="text-sm font-medium text-pulseops-text mb-4">MTTR Trend (Last 30 Days)</h3>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1E2330" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
           <XAxis
             dataKey="date"
-            tick={{ fill: '#6B7A99', fontSize: 11 }}
-            axisLine={{ stroke: '#1E2330' }}
+            tick={{ fill: '#A0A0A0', fontSize: 11 }}
+            axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
             tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fill: '#6B7A99', fontSize: 11 }}
-            axisLine={{ stroke: '#1E2330' }}
+            tick={{ fill: '#A0A0A0', fontSize: 11 }}
+            axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
             tickLine={false}
             unit="m"
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#111318',
-              border: '1px solid #1E2330',
+              backgroundColor: '#141414',
+              border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '8px',
               fontSize: '12px',
-              color: '#E8EBF0',
+              color: '#EDEDED',
             }}
-            labelStyle={{ color: '#6B7A99' }}
+            labelStyle={{ color: '#A0A0A0' }}
           />
           <Line
             type="monotone"
@@ -78,7 +78,7 @@ export default function MTTRChart({ data: propData, height = 300 }: MTTRChartPro
             stroke="#00D4FF"
             strokeWidth={2}
             dot={{ fill: '#00D4FF', r: 3, strokeWidth: 0 }}
-            activeDot={{ r: 5, stroke: '#00D4FF', strokeWidth: 2, fill: '#0A0C10' }}
+            activeDot={{ r: 5, stroke: '#00D4FF', strokeWidth: 2, fill: '#0A0A0A' }}
           />
         </LineChart>
       </ResponsiveContainer>
