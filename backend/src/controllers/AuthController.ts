@@ -119,7 +119,8 @@ export class AuthController {
   static async googleAuth(_req: Request, res: Response): Promise<void> {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     if (!clientId) {
-      res.status(501).json({ error: 'Google OAuth not configured' });
+      // Redirect back to login with a user-friendly message instead of showing a raw error page
+      res.redirect(`${FRONTEND_URL}/auth/login?error=oauth_not_configured`);
       return;
     }
     const state = generateOAuthState();
@@ -200,7 +201,7 @@ export class AuthController {
   static async githubAuth(_req: Request, res: Response): Promise<void> {
     const clientId = process.env.GITHUB_CLIENT_ID;
     if (!clientId) {
-      res.status(501).json({ error: 'GitHub OAuth not configured' });
+      res.redirect(`${FRONTEND_URL}/auth/login?error=oauth_not_configured`);
       return;
     }
     const state = generateOAuthState();

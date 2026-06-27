@@ -17,17 +17,21 @@ export default function AuthCallbackPage() {
 
     if (error) {
       setStatus('Authentication failed. Redirecting...');
-      setTimeout(() => router.push('/auth/login?error=' + error), 2000);
+      // Map Google OAuth errors to user-friendly messages
+      const mappedError = error === 'access_denied' || error === 'google_oauth_failed'
+        ? 'google_oauth_failed'
+        : error;
+      setTimeout(() => router.push('/auth/login?error=' + mappedError), 2000);
       return;
     }
 
     if (token) {
       localStorage.setItem('pulseops_token', token);
-      setStatus('Authentication successful! Redirecting...');
+      setStatus('Authentication successful! Redirecting to dashboard...');
       setTimeout(() => router.push('/dashboard'), 1000);
     } else {
-      setStatus('No token received. Redirecting...');
-      setTimeout(() => router.push('/auth/login'), 2000);
+      setStatus('No authentication data received. Redirecting...');
+      setTimeout(() => router.push('/auth/login?error=oauth_failed'), 2000);
     }
   }, [searchParams, router]);
 
@@ -47,9 +51,16 @@ export default function AuthCallbackPage() {
           </motion.div>
         </div>
         <div className="flex items-center justify-center gap-3">
-          <Loader2 size={20} className="text-pulseops-cyan animate-spin" />
+          {!status.includes('failed') && !status.includes('No authentication') && (
+            <Loader2 size={20} className="text-pulseops-cyan animate-spin" />
+          )}
           <p className="text-pulseops-muted">{status}</p>
         </div>
+        {(status.includes('failed') || status.includes('No authentication')) && (
+          <p className="text-xs text-pulseops-muted/60 mt-6">
+            Google sign-in is temporarily unavailable. Please try email login instead.
+          </p>
+        )}
       </motion.div>
     </div>
   );

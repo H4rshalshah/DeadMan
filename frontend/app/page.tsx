@@ -58,21 +58,20 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-5xl md:text-7xl font-heading font-bold mb-6"
+            className="text-4xl md:text-6xl font-heading font-bold mb-6 leading-tight"
           >
-            Production fires don&apos;t wait.
-            <span className="block text-pulseops-cyan mt-2">Neither does PulseOps.</span>
+            Resolve incidents faster with
+            <span className="block text-pulseops-cyan mt-2">intelligent automation.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-lg md:text-xl text-pulseops-muted mb-10 max-w-2xl mx-auto"
+            className="text-base md:text-lg text-pulseops-muted mb-8 max-w-2xl mx-auto leading-relaxed"
           >
-            Automated incident response that thinks before you wake up.
-            Ingest alerts from any source, execute runbooks automatically,
-            and resolve incidents in minutes, not hours.
+            PulseOps ingests alerts, executes runbooks, and helps teams resolve
+            production incidents in minutes instead of hours.
           </motion.p>
 
           <motion.div
@@ -83,14 +82,14 @@ export default function LandingPage() {
           >
             <Link
               href="/auth/signup"
-              className="group flex items-center gap-2 px-8 py-3.5 bg-pulseops-cyan text-pulseops-bg font-semibold rounded-xl hover:bg-pulseops-cyan/90 transition-all hover:shadow-lg hover:shadow-pulseops-cyan/20"
+              className="group flex items-center gap-2 px-6 py-2.5 bg-pulseops-cyan text-pulseops-bg font-semibold rounded-xl hover:bg-pulseops-cyan/90 transition-all hover:shadow-lg hover:shadow-pulseops-cyan/20 text-sm"
             >
-              Start Free
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              Sign Up
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="#how-it-works"
-              className="flex items-center gap-2 px-8 py-3.5 text-pulseops-muted hover:text-pulseops-text transition-colors text-sm"
+              className="flex items-center gap-2 px-6 py-2.5 border border-pulseops-border text-pulseops-muted hover:text-pulseops-text rounded-xl hover:border-pulseops-cyan/30 transition-all text-sm"
             >
               How it works
             </a>
@@ -100,9 +99,12 @@ export default function LandingPage() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8"
+          className="absolute bottom-10"
         >
-          <ChevronDown size={24} className="text-pulseops-muted" />
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-pulseops-muted/50">Scroll to explore</span>
+            <ChevronDown size={20} className="text-pulseops-muted" />
+          </div>
         </motion.div>
       </section>
 

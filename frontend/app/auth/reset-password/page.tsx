@@ -69,8 +69,14 @@ export default function ResetPasswordPage() {
               <div className="w-12 h-12 mx-auto mb-4 bg-pulseops-success/10 rounded-full flex items-center justify-center">
                 <CheckCircle size={24} className="text-pulseops-success" />
               </div>
-              <p className="text-sm text-pulseops-text mb-1">Password reset successful</p>
-              <p className="text-xs text-pulseops-muted">Redirecting to login...</p>
+              <p className="text-sm text-pulseops-text mb-1">Password reset successfully</p>
+              <p className="text-xs text-pulseops-muted">Please sign in with your new password.</p>
+              <Link
+                href="/auth/login?reset=success"
+                className="inline-flex items-center gap-1 mt-4 text-sm text-pulseops-cyan hover:text-pulseops-cyan/80 transition-colors"
+              >
+                Go to sign in
+              </Link>
             </div>
           ) : !token ? (
             <div className="text-center py-4">

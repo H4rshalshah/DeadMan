@@ -13,6 +13,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const reset = searchParams.get('reset');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -54,11 +55,27 @@ export default function LoginPage() {
           <p className="text-sm text-pulseops-muted mt-1">Sign in to your PulseOps workspace</p>
         </div>
 
+        {reset === 'success' && (
+          <div className="mb-4 px-4 py-3 bg-pulseops-success/10 border border-pulseops-success/20 rounded-xl text-sm text-pulseops-success">
+            Password reset successfully. Please sign in.
+          </div>
+        )}
+
         {error && (
           <div className="mb-4 px-4 py-3 bg-pulseops-danger/10 border border-pulseops-danger/20 rounded-xl text-sm text-pulseops-danger">
-            {error === 'oauth_not_configured' ? 'OAuth is not configured. Use email/password or set up OAuth credentials.' :
-             error === 'token_exchange_failed' ? 'Failed to authenticate with the provider.' :
-             error === 'oauth_failed' ? 'OAuth authentication failed.' : 'Authentication error.'}
+            {error === 'access_denied' || error === 'google_oauth_failed' ? (
+              <span>Google sign-in is temporarily unavailable. Please try email login.</span>
+            ) : error === 'oauth_not_configured' ? (
+              'OAuth is not configured. Use email/password to sign in.'
+            ) : error === 'token_exchange_failed' || error === 'oauth_failed' ? (
+              'Social sign-in failed. Please try email login instead.'
+            ) : error === 'invalid_state' ? (
+              'Authentication session expired. Please try again.'
+            ) : error === 'no_code' ? (
+              'Authentication provider returned an empty response. Please try again.'
+            ) : (
+              'Authentication error. Please try again.'
+            )}
           </div>
         )}
 
