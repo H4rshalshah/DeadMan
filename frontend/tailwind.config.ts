@@ -14,21 +14,21 @@ const config: Config = {
           bg: 'var(--color-bg)',
           surface: 'var(--color-surface)',
           border: 'var(--color-border)',
-          cyan: '#00D4FF',
-          cyanLight: '#006680',
-          cyanGlow: '#00D4FF20',
-          danger: '#FF3B5C',
-          warning: '#FFB020',
-          success: '#00E5A0',
+          // Primary accent - indigo
+          accent: '#6366F1',
+          accentLight: '#818CF8',
+          accentDark: '#4F46E5',
+          accentGlow: 'rgba(99, 102, 241, 0.12)',
+          // Backward-compatible cyan → indigo aliases
+          cyan: '#6366F1',
+          cyanLight: '#818CF8',
+          cyanGlow: 'rgba(99, 102, 241, 0.12)',
+          danger: '#EF4444',
+          warning: '#F59E0B',
+          success: '#10B981',
           text: 'var(--color-text)',
           muted: 'var(--color-muted)',
-        },
-        light: {
-          bg: '#000000',
-          text: '#E8EBF0',
-          surface: 'transparent',
-          border: 'transparent',
-          muted: '#6B7A99',
+          'text-secondary': 'var(--color-text-secondary)',
         },
       },
       fontFamily: {
@@ -38,20 +38,13 @@ const config: Config = {
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'breathing': 'breathing 3s ease-in-out infinite',
         'slide-in-right': 'slideInRight 0.3s ease-out',
         'shimmer': 'shimmer 2s linear infinite',
-        'typing': 'typing 3s steps(40, end)',
-        'heartbeat': 'heartbeat 1s ease-in-out infinite',
       },
       keyframes: {
         pulseGlow: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.5' },
-        },
-        breathing: {
-          '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
-          '50%': { opacity: '1', transform: 'scale(1.05)' },
         },
         slideInRight: {
           '0%': { transform: 'translateX(100%)', opacity: '0' },
@@ -61,20 +54,11 @@ const config: Config = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
-        typing: {
-          '0%': { width: '0' },
-          '100%': { width: '100%' },
-        },
-        heartbeat: {
-          '0%, 100%': { transform: 'scale(1)' },
-          '14%': { transform: 'scale(1.3)' },
-          '28%': { transform: 'scale(1)' },
-          '42%': { transform: 'scale(1.3)' },
-          '56%': { transform: 'scale(1)' },
-        },
       },
-      backgroundImage: {
-        'shimmer-gradient': 'linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)',
+      boxShadow: {
+        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06)',
+        'card-hover': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05)',
+        'card-dark': '0 1px 2px 0 rgba(0, 0, 0, 0.3)',
       },
     },
   },

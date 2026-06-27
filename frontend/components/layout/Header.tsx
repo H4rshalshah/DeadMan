@@ -88,7 +88,10 @@ export default function Header() {
         {/* Quick Create */}
         <button
           onClick={handleNewIncident}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-pulseops-bg bg-pulseops-cyan rounded-lg hover:bg-pulseops-cyan/90 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white rounded-lg transition-all shadow-sm"
+          style={{ backgroundColor: '#6366F1' }}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.backgroundColor = '#4F46E5'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.backgroundColor = '#6366F1'; }}
         >
           <Plus size={16} />
           <span className="hidden sm:inline">New Incident</span>

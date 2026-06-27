@@ -12,7 +12,7 @@ interface IncidentTimelineProps {
 export default function IncidentTimeline({ incidents }: IncidentTimelineProps) {
   if (incidents.length === 0) {
     return (
-      <div className="bg-pulseops-surface border border-pulseops-border rounded-xl p-5">
+      <div className="bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl p-5 shadow-card">
         <h3 className="text-sm font-medium text-pulseops-text mb-4">Recent Incidents</h3>
         <div className="text-center py-8 text-sm text-pulseops-muted">
           No incidents recorded
@@ -22,7 +22,7 @@ export default function IncidentTimeline({ incidents }: IncidentTimelineProps) {
   }
 
   return (
-    <div className="bg-pulseops-surface border border-pulseops-border rounded-xl p-5">
+    <div className="bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl p-5 shadow-card">
       <h3 className="text-sm font-medium text-pulseops-text mb-4">Recent Incidents</h3>
       <div className="space-y-1">
         {incidents.slice(0, 8).map((incident, i) => (
@@ -37,7 +37,7 @@ export default function IncidentTimeline({ incidents }: IncidentTimelineProps) {
             <div className={`w-2 h-2 rounded-full shrink-0 ${
               incident.severity === 'critical' ? 'bg-pulseops-danger' :
               incident.severity === 'high' ? 'bg-pulseops-warning' :
-              incident.severity === 'medium' ? 'bg-pulseops-cyan' : 'bg-pulseops-success'
+              incident.severity === 'medium' ? 'bg-pulseops-accent' : 'bg-pulseops-success'
             }`} />
             
             <div className="flex-1 min-w-0">

@@ -19,10 +19,10 @@ const iconMap = {
 };
 
 const colorMap = {
-  incidents: { bg: 'bg-pulseops-danger/10', border: 'border-pulseops-danger/20', text: 'text-pulseops-danger' },
-  mttr: { bg: 'bg-pulseops-cyan/10', border: 'border-pulseops-cyan/20', text: 'text-pulseops-cyan' },
-  active: { bg: 'bg-pulseops-success/10', border: 'border-pulseops-success/20', text: 'text-pulseops-success' },
-  actions: { bg: 'bg-pulseops-warning/10', border: 'border-pulseops-warning/20', text: 'text-pulseops-warning' },
+  incidents: { bg: 'bg-red-50 dark:bg-red-500/10', border: 'border-red-200 dark:border-red-500/20', text: 'text-pulseops-danger' },
+  mttr: { bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200 dark:border-indigo-500/20', text: 'text-pulseops-accent' },
+  active: { bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-200 dark:border-emerald-500/20', text: 'text-pulseops-success' },
+  actions: { bg: 'bg-amber-50 dark:bg-amber-500/10', border: 'border-amber-200 dark:border-amber-500/20', text: 'text-pulseops-warning' },
 };
 
 function MetricCardComponent({ title, value, subtitle, icon, trend }: MetricCardProps) {
@@ -30,7 +30,7 @@ function MetricCardComponent({ title, value, subtitle, icon, trend }: MetricCard
   const colors = colorMap[icon];
 
   return (
-    <div className={`${colors.bg} ${colors.border} border rounded-xl p-5`}>
+    <div className={`${colors.bg} ${colors.border} border rounded-xl p-5 shadow-card`}>
       <div className="flex items-start justify-between mb-3">
         <span className="text-xs font-medium text-pulseops-muted uppercase tracking-wider">{title}</span>
         <div className={`p-2 rounded-lg ${colors.bg}`}>

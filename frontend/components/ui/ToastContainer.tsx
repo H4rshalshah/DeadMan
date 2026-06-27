@@ -14,7 +14,7 @@ const icons = {
 const colors = {
   success: 'border-pulseops-success bg-pulseops-success/10 text-pulseops-success',
   error: 'border-pulseops-danger bg-pulseops-danger/10 text-pulseops-danger',
-  info: 'border-pulseops-cyan bg-pulseops-cyan/10 text-pulseops-cyan',
+  info: 'border-pulseops-accent bg-indigo-50 dark:bg-indigo-500/10 text-pulseops-accent',
   warning: 'border-pulseops-warning bg-pulseops-warning/10 text-pulseops-warning',
 };
 

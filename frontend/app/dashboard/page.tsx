@@ -12,13 +12,13 @@ import { analyticsApi, webhooksApi, incidentsApi, workspaceApi, authApi } from '
 import { toast } from '@/hooks/useToast';
 import type { Incident, MTTRDataPoint, Workspace, User } from '@/lib/types';
 import {
-  Webhook, Plus, RefreshCw, Loader2, Users, Server, Activity, Bell,
-  ArrowRight, Layout, ChevronDown, UserPlus, Settings
+  Plus, RefreshCw, Loader2, Users, Server, Activity, Bell,
+  ArrowRight, Layout, ChevronDown, UserPlus, Settings, Zap
 } from 'lucide-react';
 
 const MTTRChart = dynamic(() => import('@/components/dashboard/MTTRChart'), {
   ssr: false,
-  loading: () => <div className="h-[300px] bg-pulseops-surface border border-pulseops-border rounded-xl animate-pulse flex items-center justify-center"><Loader2 size={20} className="text-pulseops-cyan animate-spin" /></div>,
+  loading: () => <div className="h-[300px] bg-pulseops-surface border border-pulseops-border rounded-xl animate-pulse flex items-center justify-center"><Loader2 size={20} className="text-pulseops-accent animate-spin" /></div>,
 });
 
 export default function DashboardPage() {
@@ -163,120 +163,169 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleTestWebhook}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-pulseops-warning bg-pulseops-warning/10 border border-pulseops-warning/20 rounded-xl hover:bg-pulseops-warning/20 transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-pulseops-warning bg-white dark:bg-transparent border border-pulseops-warning/30 rounded-xl hover:bg-pulseops-warning/10 transition-all shadow-card"
           >
-            <Webhook size={14} />
+            <Plus size={14} />
             Test Webhook
           </button>
           <button
             onClick={handleManualIncident}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-pulseops-bg bg-pulseops-cyan rounded-xl hover:bg-pulseops-cyan/90 transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-xl transition-all shadow-card"
+            style={{ backgroundColor: '#6366F1' }}
           >
-            <Plus size={14} />
+            <Zap size={14} />
             Trigger Incident
           </button>
         </div>
       </div>
 
-      {/* Workspace Selector + Create */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
-          <button
-            onClick={() => setShowWsDropdown(!showWsDropdown)}
-            className="flex items-center gap-2 px-4 py-2 bg-pulseops-surface border border-pulseops-border rounded-xl text-sm text-pulseops-text hover:border-pulseops-cyan/30 transition-all"
-          >
-            <Layout size={14} className="text-pulseops-cyan" />
-            <span className="font-medium">
-              {loadingUser ? 'Loading...' : currentWorkspace?.name || 'No workspace'}
-            </span>
-            <ChevronDown size={14} className={`text-pulseops-muted transition-transform ${showWsDropdown ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showWsDropdown && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowWsDropdown(false)} />
-              <div className="absolute left-0 top-full mt-2 w-64 bg-pulseops-surface border border-pulseops-border rounded-xl shadow-xl z-20 overflow-hidden">
-                <div className="px-3 py-2 text-[10px] font-medium text-pulseops-muted uppercase tracking-wider border-b border-pulseops-border">
-                  Workspaces
-                </div>
-                {workspaces.length === 0 ? (
-                  <div className="px-3 py-4 text-center text-xs text-pulseops-muted">
-                    No workspaces yet
-                  </div>
-                ) : (
-                  workspaces.map((ws) => (
-                    <button
-                      key={ws.id}
-                      onClick={() => handleSwitchWorkspace(ws)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors hover:bg-pulseops-cyan/10 ${
-                        ws.id === currentWorkspace?.id ? 'text-pulseops-cyan bg-pulseops-cyan/10' : 'text-pulseops-text'
-                      }`}
-                    >
-                      <div className="w-6 h-6 rounded bg-pulseops-cyan/20 flex items-center justify-center shrink-0">
-                        <span className="text-[9px] font-bold text-pulseops-cyan">{ws.name.charAt(0)}</span>
-                      </div>
-                      <div className="flex-1 text-left min-w-0">
-                        <p className="text-sm font-medium truncate">{ws.name}</p>
-                        <p className="text-[10px] text-pulseops-muted capitalize">{ws.role || 'member'}</p>
-                      </div>
-                      {ws.id === currentWorkspace?.id && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-pulseops-cyan shrink-0" />
-                      )}
-                    </button>
-                  ))
-                )}
-                <div className="border-t border-pulseops-border p-2">
-                  <button
-                    onClick={() => { setShowWsDropdown(false); setShowWorkspaceCreate(true); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-pulseops-cyan hover:bg-pulseops-cyan/10 rounded-lg transition-colors"
-                  >
-                    <Plus size={14} />
-                    Create Workspace
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Create Workspace Form */}
-      {showWorkspaceCreate && (
-        <div className="bg-pulseops-surface border border-pulseops-border rounded-xl p-5">
-          <h3 className="text-sm font-medium text-pulseops-text mb-4 flex items-center gap-2">
-            <Layout size={16} className="text-pulseops-cyan" />
-            Create New Workspace
-          </h3>
+      {/* Workspace Section - dedicated area with proper spacing */}
+      <div className="bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl p-5 shadow-card">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <input
-              type="text"
-              value={newWorkspaceName}
-              onChange={(e) => setNewWorkspaceName(e.target.value)}
-              placeholder="My Production Team"
-              className="flex-1 bg-pulseops-bg border border-pulseops-border rounded-lg px-4 py-2.5 text-sm text-pulseops-text placeholder-pulseops-muted/50 outline-none focus:border-pulseops-cyan/50 transition-colors"
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
-            />
-            <button
-              onClick={handleCreateWorkspace}
-              disabled={creatingWorkspace || !newWorkspaceName.trim()}
-              className="flex items-center gap-2 px-4 py-2.5 bg-pulseops-cyan text-pulseops-bg font-medium rounded-lg hover:bg-pulseops-cyan/90 disabled:opacity-50 transition-all text-sm"
-            >
-              {creatingWorkspace ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-              Create
-            </button>
-            <button
-              onClick={() => setShowWorkspaceCreate(false)}
-              className="px-4 py-2.5 text-sm text-pulseops-muted hover:text-pulseops-text transition-colors"
-            >
-              Cancel
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowWsDropdown(!showWsDropdown)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-pulseops-bg border border-pulseops-border rounded-xl text-sm text-pulseops-text hover:border-pulseops-accent/30 transition-all shadow-sm"
+              >
+                <Layout size={15} style={{ color: '#6366F1' }} />
+                <span className="font-medium">
+                  {loadingUser ? 'Loading...' : currentWorkspace?.name || 'Select workspace'}
+                </span>
+                <ChevronDown size={14} className={`text-pulseops-muted transition-transform ${showWsDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showWsDropdown && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowWsDropdown(false)} />
+                  <div className="absolute left-0 top-full mt-2 w-64 bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl shadow-lg z-20 overflow-hidden">
+                    <div className="px-3 py-2.5 text-[10px] font-semibold text-pulseops-muted uppercase tracking-wider border-b border-pulseops-border">
+                      Workspaces
+                    </div>
+                    {workspaces.length === 0 ? (
+                      <div className="px-3 py-6 text-center text-xs text-pulseops-muted">
+                        No workspaces yet
+                      </div>
+                    ) : (
+                      workspaces.map((ws) => (
+                        <button
+                          key={ws.id}
+                          onClick={() => handleSwitchWorkspace(ws)}
+                          className={`w-full flex items-center gap-3 px-3 py-3 text-sm transition-colors ${
+                            ws.id === currentWorkspace?.id
+                              ? 'text-pulseops-accent bg-indigo-50 dark:bg-indigo-500/10'
+                              : 'text-pulseops-text hover:bg-gray-50 dark:hover:bg-pulseops-border/30'
+                          }`}
+                        >
+                          <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(99, 102, 241, 0.15)' }}>
+                            <span className="text-[10px] font-bold" style={{ color: '#6366F1' }}>{ws.name.charAt(0)}</span>
+                          </div>
+                          <div className="flex-1 text-left min-w-0">
+                            <p className="text-sm font-medium truncate">{ws.name}</p>
+                            <p className="text-[11px] text-pulseops-muted capitalize">{ws.role || 'member'}</p>
+                          </div>
+                          {ws.id === currentWorkspace?.id && (
+                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#6366F1' }} />
+                          )}
+                        </button>
+                      ))
+                    )}
+                    <div className="border-t border-pulseops-border p-2">
+                      <button
+                        onClick={() => { setShowWsDropdown(false); setShowWorkspaceCreate(true); }}
+                        className="flex items-center gap-2 w-full px-3 py-2.5 text-sm rounded-lg transition-colors"
+                        style={{ color: '#6366F1' }}
+                        onMouseEnter={(e) => { (e.target as HTMLElement).style.backgroundColor = 'rgba(99, 102, 241, 0.08)'; }}
+                        onMouseLeave={(e) => { (e.target as HTMLElement).style.backgroundColor = 'transparent'; }}
+                      >
+                        <Plus size={14} />
+                        Create Workspace
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
+
+          {/* Create Workspace Button - always visible, never overlapping */}
+          <button
+            onClick={() => setShowWorkspaceCreate(true)}
+            className="btn-primary shrink-0"
+          >
+            <Plus size={15} />
+            Create Workspace
+          </button>
         </div>
-      )}
+
+        {/* Create Workspace Form - appears below, not overlapping */}
+        {showWorkspaceCreate && (
+          <div className="mt-4 pt-4 border-t border-pulseops-border">
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={newWorkspaceName}
+                onChange={(e) => setNewWorkspaceName(e.target.value)}
+                placeholder="Enter workspace name..."
+                className="flex-1 bg-white dark:bg-pulseops-bg border border-pulseops-border rounded-lg px-4 py-2.5 text-sm text-pulseops-text placeholder-pulseops-muted/60 outline-none transition-colors"
+                style={{} as React.CSSProperties}
+                onFocus={(e) => { e.target.style.borderColor = '#6366F1'; }}
+                onBlur={(e) => { e.target.style.borderColor = ''; }}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateWorkspace()}
+              />
+              <button
+                onClick={handleCreateWorkspace}
+                disabled={creatingWorkspace || !newWorkspaceName.trim()}
+                className="btn-primary"
+              >
+                {creatingWorkspace ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                Create
+              </button>
+              <button
+                onClick={() => setShowWorkspaceCreate(false)}
+                className="px-4 py-2.5 text-sm text-pulseops-muted hover:text-pulseops-text transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Workspace List - clean vertical list below */}
+        {workspaces.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <p className="text-xs font-medium text-pulseops-muted uppercase tracking-wider">Your Workspaces</p>
+            <div className="grid gap-2">
+              {workspaces.map((ws) => (
+                <div
+                  key={ws.id}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg transition-colors cursor-pointer"
+                  style={{
+                    backgroundColor: ws.id === currentWorkspace?.id ? 'rgba(99, 102, 241, 0.06)' : 'transparent',
+                    borderLeft: ws.id === currentWorkspace?.id ? '3px solid #6366F1' : '3px solid transparent',
+                  }}
+                  onClick={() => handleSwitchWorkspace(ws)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(99, 102, 241, 0.12)' }}>
+                      <span className="text-xs font-bold" style={{ color: '#6366F1' }}>{ws.name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-pulseops-text">{ws.name}</p>
+                      <p className="text-xs text-pulseops-muted capitalize">{ws.role || 'member'} • {new Date(ws.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-pulseops-muted">{ws.role === 'owner' ? 'Owner' : 'Member'}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-2">
-        {quickActions.map((action, i) => {
+        {quickActions.filter(a => a.label !== 'Create Workspace').map((action, i) => {
           const Icon = action.icon;
           return (
             <button
@@ -285,39 +334,39 @@ export default function DashboardPage() {
                 if (action.onClick) action.onClick();
                 else if (action.href.startsWith('/')) router.push(action.href);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-pulseops-surface border border-pulseops-border rounded-xl text-sm hover:border-pulseops-cyan/30 transition-all group"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl text-sm hover:border-pulseops-accent/30 transition-all shadow-card card-hover group"
             >
               <Icon size={15} className={action.color} />
-              <span className="text-pulseops-text group-hover:text-pulseops-cyan transition-colors">{action.label}</span>
+              <span className="text-pulseops-text group-hover:text-pulseops-accent transition-colors">{action.label}</span>
               <ArrowRight size={13} className="text-pulseops-muted group-hover:translate-x-0.5 transition-transform" />
             </button>
           );
         })}
       </div>
 
-      {/* Onboarding for new users */}
+      {/* Onboarding for new users - no workspace */}
       {!loadingUser && !hasWorkspace && (
-        <div className="bg-gradient-to-r from-pulseops-cyanLight/10 to-pulseops-surface border border-pulseops-cyan/20 rounded-xl p-6">
+        <div className="bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-500/5 dark:to-pulseops-surface border border-pulseops-accent/20 rounded-xl p-6 shadow-card">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-pulseops-cyan/20 flex items-center justify-center shrink-0">
-              <Bell size={20} className="text-pulseops-cyan" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(99, 102, 241, 0.15)' }}>
+              <Bell size={20} style={{ color: '#6366F1' }} />
             </div>
             <div className="flex-1">
               <h3 className="text-base font-heading font-bold text-pulseops-text mb-1">Welcome to PulseOps!</h3>
-              <p className="text-sm text-pulseops-muted mb-4">
+              <p className="text-sm text-pulseops-text-secondary mb-4">
                 Get started by creating your first workspace. Workspaces let you organize projects, team members, and incident response workflows.
               </p>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() => setShowWorkspaceCreate(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-pulseops-cyan text-pulseops-bg font-medium rounded-xl hover:bg-pulseops-cyan/90 transition-all text-sm"
+                  className="btn-primary"
                 >
                   <Plus size={14} />
                   Create Workspace
                 </button>
                 <button
                   onClick={() => router.push('/settings')}
-                  className="flex items-center gap-2 px-4 py-2 border border-pulseops-border text-pulseops-muted rounded-xl hover:text-pulseops-text transition-all text-sm"
+                  className="btn-secondary"
                 >
                   <Settings size={14} />
                   Configure Settings
@@ -366,12 +415,12 @@ export default function DashboardPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Quick Overview */}
-          <div className="bg-pulseops-surface border border-pulseops-border rounded-xl p-5">
+          <div className="bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl p-5 shadow-card">
             <h3 className="text-sm font-medium text-pulseops-text mb-4">Quick Overview</h3>
             <div className="space-y-3">
               {[
                 { label: 'Resolved Today', value: summary?.resolved_today ?? 0, color: 'text-pulseops-success' },
-                { label: 'Avg Response Time', value: summary?.avg_mttr ? `${Math.round(summary.avg_mttr / 60)}m` : '—', color: 'text-pulseops-cyan' },
+                { label: 'Avg Response Time', value: summary?.avg_mttr ? `${Math.round(summary.avg_mttr / 60)}m` : '—', color: 'text-pulseops-accent' },
                 { label: 'System Status', value: 'Operational', color: 'text-pulseops-success' },
               ].map((stat, i) => (
                 <div key={i} className="flex items-center justify-between py-2 border-b border-pulseops-border last:border-0">
@@ -383,7 +432,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Live indicator */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-pulseops-surface border border-pulseops-border rounded-xl">
+          <div className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-xl shadow-card">
             <span className="w-2 h-2 bg-pulseops-success rounded-full animate-pulse" />
             <span className="text-xs text-pulseops-muted">WebSocket connected — live updates active</span>
             <RefreshCw size={12} className="ml-auto text-pulseops-muted" />

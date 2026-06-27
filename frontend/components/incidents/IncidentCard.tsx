@@ -13,7 +13,7 @@ interface IncidentCardProps {
 function IncidentCardComponent({ incident }: IncidentCardProps) {
   return (
     <Link href={`/incidents/${incident.id}`}>
-      <div className="group flex items-center gap-4 px-4 py-3 bg-pulseops-surface border border-pulseops-border rounded-lg hover:border-pulseops-cyan/30 hover:bg-pulseops-cyan/5 transition-all cursor-pointer">
+      <div className="group flex items-center gap-4 px-4 py-3 bg-white dark:bg-pulseops-surface border border-pulseops-border rounded-lg hover:border-pulseops-accent/30 hover:shadow-card-hover transition-all cursor-pointer shadow-card">
         {/* Severity indicator */}
         <div className={`w-1 h-10 rounded-full shrink-0 ${
           incident.severity === 'critical' ? 'bg-pulseops-danger' :
@@ -23,7 +23,7 @@ function IncidentCardComponent({ incident }: IncidentCardProps) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-sm font-medium text-pulseops-text truncate group-hover:text-pulseops-cyan transition-colors">
+            <h3 className="text-sm font-medium text-pulseops-text truncate group-hover:text-pulseops-accent transition-colors">
               {incident.title}
             </h3>
             <StatusBadge status={incident.status} />
